@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+
+# Environments
+.venv/
+env_colorama
+venv/
+env/
+# For uv:
+.uv/
+
+# Distribution / packaging
+.Python
+build/
+dist/
+wheels/
+*.egg
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Miscellaneous
+.python-version
+test.py
