@@ -2,6 +2,17 @@ from collections import UserDict
 import re
 
 
+# def error_handler(func):
+#     def wrapper(*args, **kwargs):
+#         try:
+#             res = func(*args, **kwargs)
+#             return res
+#         except ValueError:
+#             print("Wrong phone format")
+        
+#     return wrapper
+
+
 class Field:
     def __init__(self, value):
         self.value = value
@@ -35,11 +46,13 @@ class Record:
         self.name = Name(name)
         self.phones = []
 
+
     def add_phone(self, phone):
         try:        
             p = Phone(phone)         
             self.phones.append(p)
         except(ValueError):
+            print("Wrong phone format")
             return False
         return True
 
