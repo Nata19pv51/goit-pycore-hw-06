@@ -2,15 +2,15 @@ from collections import UserDict
 import re
 
 
-# def error_handler(func):
-#     def wrapper(*args, **kwargs):
-#         try:
-#             res = func(*args, **kwargs)
-#             return res
-#         except ValueError:
-#             print("Wrong phone format")
+def error_handler(func):
+    def wrapper(*args, **kwargs):
+        try:
+            res = func(*args, **kwargs)
+            return res
+        except ValueError:
+            print("Wrong phone format")
         
-#     return wrapper
+    return wrapper
 
 
 class Field:
@@ -26,16 +26,14 @@ class Name(Field):
 
 
 class Phone(Field):
-
     def __init__(self, value):
         if self.phone_validation(value):
             super().__init__(value)
         else:
             raise ValueError
         
-    def phone_validation(self, phone):
-        pattern = r'\d{10}'
-        match = re.fullmatch(pattern, phone)
+    def phone_validation(self, phone: str):
+        match = re.fullmatch(r'\d{10}', phone)
         if match:
             return True
         return False
@@ -46,40 +44,39 @@ class Record:
         self.name = Name(name)
         self.phones = []
 
-
     def add_phone(self, phone):
         try:        
             p = Phone(phone)         
             self.phones.append(p)
+            return True
         except(ValueError):
-            print("Wrong phone format")
             return False
-        return True
-
+    
+    def check_phone_entry(self, phone):
+        for index, p in enumerate(self.phones):
+            if p.value == phone:
+                return index
+        return -1
+    
+    def find_phone(self, phone):
+        index = self.check_phone_entry(phone)
+        if index >= 0:
+            return self.phones[index].value
+        return None
+    
     def remove_phone(self, phone):
-        for one_phone in self.phones:
-            if one_phone == phone:
-                self.phones.remove(one_phone)
-                return "The phone was removed"
-            return "The phone doesn't exist"
-
-    def edit_phone(self, old_phone, new_phone):
-        o_phone = Phone(old_phone)
-        n_phone = Phone(new_phone)
-
-        for phone in self.phones:
-            if phone.value == o_phone.value:
-                phone.value = n_phone.value
-                return True
+        index = self.check_phone_entry(phone)
+        
+        if index >= 0:
+            self.phones.remove(self.phones[index])
+            return True
         return False
 
-    def find_phone(self, phone):
-        phone_obj = Phone(phone)
-
-        for p in self.phones:
-            if p.value == phone_obj.value:
-                return p
-            
+    def edit_phone(self, old_phone, new_phone):
+        index = self.check_phone_entry(old_phone)
+        if index >= 0:
+            self.phones[index].value = new_phone
+            return self.phones
         return None
 
     def __str__(self):
@@ -102,11 +99,9 @@ class AddressBook(UserDict):
         
         if name in self.data:
             self.data.pop(name)
-            print("!!!!!!!!!!!!!!!!!!!!!!!")
-            return True
-        
-        print("********************")
-        return False
+            return self.data
+
+        return None
 
 
 if __name__ == "__main__":
@@ -116,7 +111,8 @@ if __name__ == "__main__":
     # Створення запису для John
     john_record = Record("John")
     john_record.add_phone("1234567890")
-    john_record.add_phone("5555555555")
+    booll = john_record.add_phone("5555555555")
+    john_record.add_phone("3333333333")
 
     # Додавання запису John до адресної книги
     book.add_record(john_record)
@@ -135,14 +131,16 @@ if __name__ == "__main__":
     john.edit_phone("1234567890", "1112223333")
 
     print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
+    
+    john.remove_phone("3333333333")
 
+    print(john) 
     # Пошук конкретного телефону у записі John
     found_phone = john.find_phone("5555555555")
     print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
 
     # Видалення запису Jane
     book.delete("Jane")
-
 
     for name, record in book.data.items():
         print(record)
