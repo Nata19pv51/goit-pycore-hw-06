@@ -44,13 +44,11 @@ class Record:
         self.name = Name(name)
         self.phones = []
 
-    def add_phone(self, phone):
-        try:        
-            p = Phone(phone)         
-            self.phones.append(p)
-            return True
-        except(ValueError):
-            return False
+    @error_handler
+    def add_phone(self, phone):      
+        p = Phone(phone)         
+        self.phones.append(p)
+        return self.phones
     
     def check_phone_entry(self, phone):
         for index, p in enumerate(self.phones):
@@ -61,23 +59,21 @@ class Record:
     def find_phone(self, phone):
         index = self.check_phone_entry(phone)
         if index >= 0:
-            return self.phones[index].value
-        return None
+            return self.phones[index]
     
     def remove_phone(self, phone):
         index = self.check_phone_entry(phone)
-        
         if index >= 0:
             self.phones.remove(self.phones[index])
             return True
-        return False
 
+    @error_handler
     def edit_phone(self, old_phone, new_phone):
         index = self.check_phone_entry(old_phone)
         if index >= 0:
-            self.phones[index].value = new_phone
+            new_phone_obj = Phone(new_phone)
+            self.phones[index] = new_phone_obj
             return self.phones
-        return None
 
     def __str__(self):
         return f"Contact name: {self.name.value} \
